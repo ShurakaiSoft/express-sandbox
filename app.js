@@ -17,6 +17,11 @@ app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
+app.use(express.cookieParser("test"));
+app.use(express.session({
+	secret: 'test',
+	maxAge: 3600000
+}));
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -25,10 +30,9 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-// app.get('/', routes.index);
-//app.get('/users', user.list);
 require('./routes/index')(app);
 require('./routes/users')(app);
+require('./routes/session')(app);
 
 http.createServer(app).listen(app.get('port'), function () {
   console.log('Express server listening on port ' + app.get('port'));
