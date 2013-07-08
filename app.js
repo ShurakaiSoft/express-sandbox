@@ -23,7 +23,6 @@ app.use(express.session({
 	maxAge: 3600000
 }));
 app.use(function (req, res, next) {
-	console.log(req.session.user);
 	res.locals.user = req.session.user;
 	next();
 });

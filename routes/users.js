@@ -1,33 +1,31 @@
-
 /*
- * GET users listing.
+ * User routes
  */
 
-//exports.list = function(req, res){
-//  res.send("respond with a resource");
-//};
-
 var users = require('../data/users');
+var notLoggedIn = require('./middleware/not_logged_in');
+var loadUser = require('./middleware/load_user');
+var restrictUserToSelf = require('./middleware/restrict_user_to_self');
 
 module.exports = function(app) {
 	app.get('/users', function (req, res) {
 		res.render('users/index', {title: 'User Index', users: users});
 	});
 	
-	app.get('/users/new', function (req, res) {
+	app.get('/users/new', notLoggedIn, function (req, res) {
 		res.render('users/new', {title: "New User"});
 	});
 	
-	app.get('/users/:name', function (req, res, next) {
+	app.get('/users/:name', loadUser, restrictUserToSelf, function (req, res, next) {
 		var user = users[req.params.name];
 		if (user) {
-			res.render('users/profile', {title: 'User profile', user: user});
+			res.render('users/profile', {title: 'User profile', user: req.user});
 		} else {
 			next();
 		}
 	});
 	
-	app.post('/users', function (req, res) {
+	app.post('/users', notLoggedIn, function (req, res) {
 		if (users[req.body.username]) {
 			res.send('Conflict', 409);
 		} else {
@@ -36,14 +34,9 @@ module.exports = function(app) {
 		}
 	});
 	
-	app.del('/users/:name', function (req, res, next) {
-		var user = req.params.name;
-		if (users[user]) {
-			delete users[user];
-			res.redirect('/users');
-		} else {
-			next();
-		}
+	app.del('/users/:name', loadUser, function (req, res, next) {
+		delete users[req.user.username];
+		res.redirect('/users');
 	});
 	
 };
