@@ -2,7 +2,8 @@
  * session routes
  */
 
-var users = require('../data/users');
+
+var userDB = require('../data/userDB');
 var notLoggedIn = require('./middleware/not_logged_in');
 
 module.exports = function (app) {
@@ -12,8 +13,8 @@ module.exports = function (app) {
 	});
 	
 	app.post('/session', notLoggedIn, function (req, res) {
-		if (users[req.body.username] && users[req.body.username].password === req.body.password) {
-			req.session.user = users[req.body.username];
+		if (userDB.validate(req.body.username, req.body.password)) {
+			req.session.user = userDB.getUser(req.body.username);
 			res.redirect('/users');
 		} else {
 			res.redirect('/session/new');

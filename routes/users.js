@@ -3,6 +3,7 @@
  */
 
 var users = require('../data/users');
+var userDB = require('../data/userDB');
 var notLoggedIn = require('./middleware/not_logged_in');
 var loadUser = require('./middleware/load_user');
 var restrictUserToSelf = require('./middleware/restrict_user_to_self');
