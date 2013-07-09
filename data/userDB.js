@@ -2,6 +2,8 @@
  * New node file
  */
 
+var fs = require('fs');
+
 var db = null;
 
 function getInstance() {
@@ -10,6 +12,15 @@ function getInstance() {
 		db = require('./users');
 	}
 	return db;
+}
+
+function saveDB(db) {
+	console.log('writing file');
+	fs.writeFile('./data/users.json', JSON.stringify(db), function (err) {
+		if (err) {
+			console.log("Error: problem while saving db.", err);
+		}
+	});
 }
 
 function validate(username, password) {
@@ -34,11 +45,13 @@ function exists(username) {
 function addUser(userData) {
 	var db = getInstance();
 	db[userData.username] = userData;
+	saveDB(db);
 }
 
 function deleteUser(username) {
 	var db = getInstance();
 	delete db[username];
+	saveDB(db);
 }
 
 
