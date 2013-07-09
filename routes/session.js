@@ -15,6 +15,7 @@ module.exports = function (app) {
 	app.post('/session', notLoggedIn, function (req, res) {
 		if (userDB.validate(req.body.username, req.body.password)) {
 			req.session.user = userDB.getUser(req.body.username);
+			console.log(req.session.user);
 			res.redirect('/users');
 		} else {
 			res.redirect('/session/new');
@@ -23,6 +24,6 @@ module.exports = function (app) {
 	
 	app.del('/session', function (req, res) {
 		req.session.destroy();
-		res.redirect('/users');
+		res.redirect('/session/new');
 	});
 };
